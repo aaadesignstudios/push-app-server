@@ -31,7 +31,7 @@ Parse.Cloud.define("addFriendToFriendsRelation", function(request, response) {
 
                     //saved the user, now edit the request status and save it
                     friendRequest.set("status", "APPROVED");
-                    //friendRequest.set("channelId", fromUser.get("objectId")+"$"+toUser.get("objectId"));
+                    friendRequest.set("channelId", fromUser.get("objectId")+"channel"+toUser.get("objectId"));
                     friendRequest.save(null, {
 
                         success: function() {
