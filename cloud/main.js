@@ -21,35 +21,54 @@ Parse.Cloud.define("addFriendToFriendsRelation", function(request, response) {
             var toUser = friendRequest.get("requestTo");
 
             var relation = fromUser.relation("friends");
+            
+            var relation1 = toUser.relation("friends");
+
+
             //add the user the request was to (the accepting user) to the fromUsers friends
             relation.add(toUser);
+			relation1.add(fromUser);
 
             //save the fromUser
             fromUser.save(null, {
 
                 success: function() {
 
-                    //get the user the request was from
-                    var fromUserM = friendRequest.get("requestFrom");
-                    //get the user the request is to
-                    var toUserM = friendRequest.get("requestTo");
+		               toUser.save(null, {
 
-                    //saved the user, now edit the request status and save it
-                    friendRequest.set("status", "APPROVED");
-                    friendRequest.set("channelId", fromUserM.id+"$channel$"+toUserM.id);
-                    friendRequest.save(null, {
+		                success: function() {
 
-                        success: function() {
+		                    //get the user the request was from
+		                    var fromUserM = friendRequest.get("requestFrom");
+		                    //get the user the request is to
+		                    var toUserM = friendRequest.get("requestTo");
 
-                            response.success("saved relation and updated friendRequest");
-                        }, 
+		                    //saved the user, now edit the request status and save it
+		                    friendRequest.set("status", "APPROVED");
+		                    friendRequest.set("channelId", fromUserM.id+"$channel$"+toUserM.id);
+		                    friendRequest.save(null, {
 
-                        error: function(error) {
+		                        success: function() {
 
-                            response.error(error);
-                        }
+		                            response.success("saved relation and updated friendRequest");
+		                        }, 
 
-                    });
+		                        error: function(error) {
+
+		                            response.error(error);
+		                        }
+
+		                    });
+
+		                },
+
+		                error: function(error) {
+
+		                 response.error(error);
+
+		                }
+
+		            });
 
                 },
 
